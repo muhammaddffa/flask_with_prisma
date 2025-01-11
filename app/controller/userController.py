@@ -1,25 +1,25 @@
-# from flask import jsonify, request
-# from prisma.models import User
+from flask import jsonify, request
+from prisma.models import User
 
-# class UserController:
-#     def getUser():
-#         users = User.prisma().find_many(include={'posts': True})
-#         return {
-#         "data": [user.dict() for user in users]
-#         }
+class UserController:
+    def getUser():
+        users = User.prisma().find_many(include={'posts': True})
+        return {
+        "data": [user.dict() for user in users]
+        }
+    def createUser():
+        data = request.get_json()
 
-#     def createUser():
-#         data = request.json
+        if not data or 'name' not in 'email' not in data:
+            return jsonify ({
+                "message": "name and emai are required"
+            }), 400
 
-#         if data is None:
-#         return
+        user = User.prisma().create(
+            data = {
+                "name": data["name"],
+                "email": data["email"]
+            }
+        )
 
-#         name = data.get('name')
-#         email = data.get('email')
-
-#         if name is None or email is None:
-#         return {"error": "You need to provide name and email"}
-
-#         user = User.prisma().create(data={'email': email, 'name': name})
-
-#         return dict(user)
+        return jsonify(user.dict()),201
